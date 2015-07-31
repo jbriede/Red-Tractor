@@ -5,7 +5,7 @@ import time
 import datetime
 import socket
 #UDP Setup
-UDP_IP = " 10.0.7.52"
+UDP_IP = " 10.0.7.52" #This should be the IP of the raspberry pi... use ifconfig command in raspberry pi window
 UDP_PORTIN = 5005
 UDP_PORTOUT = 5006
 
@@ -22,23 +22,26 @@ class DataReadListener(Leap.Listener):
     def on_frame(self, controller):
         # Get the most recent frame and report some basic information
         frame = controller.frame()
-        #self.data_buffer.append(FrameData(frame))
         hands = frame.hands
         first_hand = hands[0]
         second_hand = hands[1]
-        #hand = hands.rightmost
+        
+        
+        # the following if/else makes sure the left hand controls the left motor
         if (first_hand.palm_position.x<second_hand.palm_position.x):
             left_hand_pos = first_hand.palm_position.z*-1
             right_hand_pos = second_hand.palm_position.z*-1
         else:
             right_hand_pos = first_hand.palm_position.z*-1
             left_hand_pos = second_hand.palm_position.z*-1
-        #print "hand 1: %d, hand 2: %d" % ((int)(first_hand.palm_position.z*-1), (int)(second_hand.palm_position.z*-1))
+        
         print "left: %d, right: %d" % (left_hand_pos, right_hand_pos)
-        #print "hand 1: %d, hand 2: %d" % ((int)(first_hand.palm_position.x), (int)(second_hand.palm_position.x))
 
-        MESSAGE = ""
+MESSAGE = "" # initiate message that will be sent via UDP port
 
+
+        # adds wheel direction (1 for forward, 0 for back)
+        
         if right_hand_pos<0:
             MESSAGE+='0'
         else:
@@ -49,7 +52,7 @@ class DataReadListener(Leap.Listener):
         else:
             MESSAGE+='1'
 
-
+        # add right speed to message
         if abs(right_hand_pos)<40:
             right_hand_speed = 0
             MESSAGE+=str(right_hand_speed)
@@ -80,10 +83,9 @@ class DataReadListener(Leap.Listener):
         elif abs(right_hand_pos)<250:
             right_hand_speed = 9
             MESSAGE+=str(right_hand_speed)
-        #print MESSAGE
-        #MESSAGE = "0000"
 
 
+        # add left speed to message
         if abs(left_hand_pos)<40:
             left_hand_speed = 0
             MESSAGE+=str(left_hand_speed)
@@ -118,16 +120,12 @@ class DataReadListener(Leap.Listener):
         if len(MESSAGE)!=4:
             MESSAGE="0000"
 
-#print MESSAGE
+        #print MESSAGE   #uncomment to see what is being sent to the pi
 
         sock = socket.socket(socket.AF_INET, # Internet
                     socket.SOCK_DGRAM) # UDP
         sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
-        time.sleep(.5);
-
-        # Give some feedback to user
-        #print "Frame id: %d, timestamp: %d, hands: %d, fingers: %d, tools: %d, gestures: %d" % (
-              #frame.id, frame.timestamp, len(frame.hands), len(frame.fingers), len(frame.tools), len(frame.gestures()))
+        time.sleep(.15);
 
 
 def main():
