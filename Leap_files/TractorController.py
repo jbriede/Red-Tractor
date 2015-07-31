@@ -4,13 +4,14 @@ import json
 import time
 import datetime
 import socket
-import thread
 #UDP Setup
-UDP_IP = " 10.0.7.99"
+UDP_IP = " 10.0.7.52"
 UDP_PORTIN = 5005
 UDP_PORTOUT = 5006
 
 UDP_PORT = 5006
+
+left_hand_speed = 0
 
 
 class DataReadListener(Leap.Listener):
@@ -55,25 +56,25 @@ class DataReadListener(Leap.Listener):
         elif abs(right_hand_pos)<65:
             right_hand_speed = 1
             MESSAGE+=str(right_hand_speed)
-        elif abs(right_hand_pos)<90:
+        elif abs(right_hand_pos)<85:
             right_hand_speed = 2
             MESSAGE+=str(right_hand_speed)
-        elif abs(right_hand_pos)<115:
+        elif abs(right_hand_pos)<105:
             right_hand_speed = 3
             MESSAGE+=str(right_hand_speed)
-        elif abs(right_hand_pos)<135:
+        elif abs(right_hand_pos)<120:
             right_hand_speed = 4
             MESSAGE+=str(right_hand_speed)
-        elif abs(right_hand_pos)<155:
+        elif abs(right_hand_pos)<135:
             right_hand_speed = 5
             MESSAGE+=str(right_hand_speed)
-        elif abs(right_hand_pos)<175:
+        elif abs(right_hand_pos)<150:
             right_hand_speed = 6
             MESSAGE+=str(right_hand_speed)
-        elif abs(right_hand_pos)<190:
+        elif abs(right_hand_pos)<165:
             right_hand_speed = 7
             MESSAGE+=str(right_hand_speed)
-        elif abs(right_hand_pos)<205:
+        elif abs(right_hand_pos)<180:
             right_hand_speed = 8
             MESSAGE+=str(right_hand_speed)
         elif abs(right_hand_pos)<250:
@@ -89,25 +90,25 @@ class DataReadListener(Leap.Listener):
         elif abs(left_hand_pos)<65:
             left_hand_speed = 1
             MESSAGE+=str(left_hand_speed)
-        elif abs(left_hand_pos)<190:
+        elif abs(left_hand_pos)<85:
             left_hand_speed = 2
             MESSAGE+=str(left_hand_speed)
-        elif abs(left_hand_pos)<115:
+        elif abs(left_hand_pos)<105:
             left_hand_speed = 3
             MESSAGE+=str(left_hand_speed)
-        elif abs(left_hand_pos)<135:
+        elif abs(left_hand_pos)<120:
             left_hand_speed = 4
             MESSAGE+=str(left_hand_speed)
-        elif abs(left_hand_pos)<155:
+        elif abs(left_hand_pos)<135:
             left_hand_speed = 5
             MESSAGE+=str(left_hand_speed)
-        elif abs(left_hand_pos)<175:
+        elif abs(left_hand_pos)<150:
             left_hand_speed = 6
             MESSAGE+=str(left_hand_speed)
-        elif abs(left_hand_pos)<190:
+        elif abs(left_hand_pos)<165:
             left_hand_speed = 7
             MESSAGE+=str(left_hand_speed)
-        elif abs(left_hand_pos)<205:
+        elif abs(left_hand_pos)<180:
             left_hand_speed = 8
             MESSAGE+=str(left_hand_speed)
         elif abs(left_hand_pos)<250:
@@ -117,10 +118,12 @@ class DataReadListener(Leap.Listener):
         if len(MESSAGE)!=4:
             MESSAGE="0000"
 
-        #sock = socket.socket(socket.AF_INET, # Internet
-        #            socket.SOCK_DGRAM) # UDP
-        #sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
-        time.sleep(.15);
+#print MESSAGE
+
+        sock = socket.socket(socket.AF_INET, # Internet
+                    socket.SOCK_DGRAM) # UDP
+        sock.sendto(MESSAGE, (UDP_IP, UDP_PORT))
+        time.sleep(.5);
 
         # Give some feedback to user
         #print "Frame id: %d, timestamp: %d, hands: %d, fingers: %d, tools: %d, gestures: %d" % (
